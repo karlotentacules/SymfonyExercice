@@ -1,0 +1,16 @@
+services:
+  oc_platform.antispam.mailer:
+    class: OC\PlatformBundle\Antispam\OCAntispamMailer
+    arguments: ["@mailer",'%antispam_mail_target%','%mailer_user%']
+  oc_platform.antispam:
+    class: OC\PlatformBundle\Antispam\OCAntispam
+    arguments: ['%antispam_length_limit%',"@oc_platform.antispam.mailer"]
+  
+  oc_platform.listener.application:
+    class: OC\PlatformBundle\Listener\ApplicationDoctrineListener
+    arguments: ["@mailer",'%antispam_mail_target%','%mailer_user%']
+    tags:
+      - {name: doctrine.event_listener, event: postPersist, method: "postPersist"}
+#    oc_platform.example:
+#        class: OC\PlatformBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
